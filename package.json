@@ -1,0 +1,25 @@
+{
+	"name": "moon-ui",
+	"description": "",
+	"author": {
+		"name": "Andreas Ekström",
+		"url": "https://github.com/didair"
+	},
+	"type": "module",
+	"version": "0.0.1",
+	"private": false,
+	"source": "src/index.ts",
+	"scripts": {
+		"start": "npm run dev",
+		"build": "microbundle",
+		"dev": "microbundle watch"
+	},
+	"exports": {
+		"default": "./dist/moon-ui.modern.js"
+	},
+	"types": "./dist/index.d.ts",
+	"module": "./dist/moon-ui.js",
+	"devDependencies": {
+		"microbundle": "^0.15.1"
+	}
+}
