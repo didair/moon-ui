@@ -6,6 +6,5 @@
 
 <p align="center">
 	<br /><br /><br />
-	<img src="https://github.com/didair/moon-ui/blob/main/docs/moon-ui_icon.png?raw=true" />
+	<img src="https://github.com/didair/moon-ui/blob/main/docs/moon-ui_icon.png?raw=true" width="55" />
 </p>
-
