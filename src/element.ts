@@ -1,23 +1,24 @@
+
+export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
+export type AllowedTagTypes = keyof HTMLElementTagNameMap;
+
 export interface ElementProps {
-	tag: 'div' | 'button' | 'a' | 'img' | 'span',
-	type: 'element' | 'text',
+	tag: AllowedTagTypes,
 	children?: any,
 	onMount?: Function,
 	class?: string | (() => Array<string> | string),
 	style?: string | CSSStyleDeclaration,
 	then?: Function,
+	value?: number | string,
+	subscribe?: Function,
 };
-
-export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
 
 export const createElement = ({
 	tag = 'div',
-	type = 'element',
 	...rest
 }: ElementProps) => {
 	return {
 		tag,
-		type,
 		...rest
 	};
 };
@@ -67,6 +68,7 @@ export const applyElementStyles = (element: ElementProps, node: AllowedNodeTypes
 
 export const applyElementAttributes = (element: ElementProps, node: AllowedNodeTypes) => {
 	const safeProps = { ...element };
+	const safeEvents = ['onclick', 'onhover', 'onmousedown', 'onmouseup', 'onleave', 'onfocus'];
 
 	// Todo: Can we do this automatically instead? Maybe from reading the ElementProps int
 	delete safeProps.children;
@@ -74,9 +76,12 @@ export const applyElementAttributes = (element: ElementProps, node: AllowedNodeT
 	delete safeProps.onMount;
 	delete safeProps.style;
 	delete safeProps.tag;
-	delete safeProps.type;
 
 	Object.keys(safeProps).forEach((propKey) => {
-		node.setAttribute(propKey, safeProps[propKey]);
+		if (safeEvents.indexOf(propKey.toLowerCase()) > -1) {
+			node[propKey.toLowerCase()] = safeProps[propKey];
+		} else {
+			node.setAttribute(propKey, safeProps[propKey]);
+		}
 	});
 };

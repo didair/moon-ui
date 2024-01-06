@@ -1,4 +1,6 @@
+import { Signal } from "@preact/signals-core";
 import { applyElementStyles, handleElementLifecycles, applyElementAttributes, ElementProps } from "./element";
+import { getSignalChildren, isSignal } from "./signals";
 
 export const render = (elementList: Array<ElementProps>, parent: HTMLElement = null) => {
 	elementList.forEach(async (element) => {
@@ -11,19 +13,15 @@ export const render = (elementList: Array<ElementProps>, parent: HTMLElement = n
 			return;
 		}
 
-		if (element.type == 'text') {
-			renderText(element, parent)
-			return;
+		if (isSignal(element)) {
+			renderText(element.value + '', parent);
+			return true;
 		}
 
 		if (typeof element === 'string') {
 			// Allow passing string in children list
 			const children: string = element;
-			renderText({
-				tag: 'div',
-				type: 'text',
-				children,
-			}, parent);
+			renderText(children, parent);
 
 			return;
 		}
@@ -35,11 +33,11 @@ export const render = (elementList: Array<ElementProps>, parent: HTMLElement = n
 export const prerender = (elementList: Array<ElementProps>) => {
 	const node = document.createElement('body');
 
-	elementList.forEach((element) =>
-		element.type == 'text' ?
-			renderText(element, node)
-		: renderElement(element, node)
-	);
+	// elementList.forEach((element) =>
+	// 	element.type == 'text' ?
+	// 		renderText(element, node)
+	// 	: renderElement(element, node)
+	// );
 
 	return node.outerHTML;
 };
@@ -48,17 +46,16 @@ const renderElement = (element: ElementProps, parent = null) => {
 	const node = document.createElement(element.tag);
 
 	if (element.children != null) {
-		if (Array.isArray(element.children)) {
-			render(element.children, node);
-		}
-		
-		if (!Array.isArray(element.children) && typeof element.children === 'object') {
-			// Convert to array
-			render([element.children], node);
-		}
+		renderElementChildren(element, node);
 
-		if (typeof element.children === 'string') {
-			node.innerText = element.children;
+		const signals = getSignalChildren(element.children);
+		if (signals.length > 0) {
+			console.log('signals in element', element, signals);
+			signals.forEach((signal: Signal) => {
+				signal.subscribe((value) => {
+					onSignalChange(value, element, node);
+				});
+			});
 		}
 	}
 
@@ -74,8 +71,28 @@ const renderElement = (element: ElementProps, parent = null) => {
 	document.body.appendChild(node);
 };
 
-const renderText = (element: ElementProps, parent = null) => {
-	const node = document.createTextNode(element.children);
+const renderElementChildren = (element: ElementProps, node) => {
+	if (Array.isArray(element.children)) {
+		render(element.children, node);
+	}
+	
+	if (!Array.isArray(element.children) && typeof element.children === 'object') {
+		// Convert to array
+		render([element.children], node);
+	}
+
+	if (typeof element.children === 'string') {
+		node.innerText = element.children;
+	}
+};
+
+const onSignalChange = (value, element, node) => {
+	node.innerHTML = '';
+	renderElementChildren(element, node);
+};
+
+const renderText = (text: string, parent = null) => {
+	const node = document.createTextNode(text);
 
 	if (parent != null) {
 		parent.appendChild(node);

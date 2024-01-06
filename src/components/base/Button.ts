@@ -1,8 +1,8 @@
 import { createElement, ElementProps } from "../../element";
 
-export const Text = (props: ElementProps) => {
+export const Button = (props: ElementProps) => {
 	return createElement({
-		tag: 'span',
+		tag: 'button',
 		...props,
 	});
 };
