@@ -18,7 +18,8 @@
 		"default": "./dist/moonly.modern.js"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"docs"
 	],
 	"types": "./dist/index.d.ts",
 	"module": "./dist/moonly.js",

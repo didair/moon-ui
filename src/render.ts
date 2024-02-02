@@ -2,6 +2,11 @@ import { Signal } from "@preact/signals-core";
 import { applyElementStyles, handleElementLifecycles, applyElementAttributes, ElementProps } from "./element";
 import { getSignalChildren, getSignalsInProps, isSignal } from "./signals";
 
+/**
+ * Renders given list of elements.
+ * @param elementList List of elements
+ * @param parent Where to render
+ */
 export const render = (elementList: Array<ElementProps>, parent: HTMLElement = null) => {
 	elementList.forEach(async (element) => {
 		if (element.then != null && typeof element.then === 'function') {
@@ -30,6 +35,11 @@ export const render = (elementList: Array<ElementProps>, parent: HTMLElement = n
 	});
 };
 
+/**
+ * Not supported
+ * @param elementList List of elements
+ * @returns Generated HTML (string)
+ */
 export const prerender = (elementList: Array<ElementProps>) => {
 	const node = document.createElement('body');
 
