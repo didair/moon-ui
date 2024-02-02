@@ -4,10 +4,15 @@ import { computed, signal } from "@preact/signals-core";
 interface AnimatedTextProps extends ElementProps {
 	speed?: number;
 	showCursor?: boolean,
+	children: string,
 };
 
+/**
+ * Type: STYLIZED
+ * Description: Animates the text given in children with a type-writer like effect
+ */
 export const AnimatedText = ({
-	children,
+	children = ' ',
 	speed = 115,
 	showCursor = false,
 	...props
