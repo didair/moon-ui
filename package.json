@@ -1,5 +1,5 @@
 {
-	"name": "moon-ui",
+	"name": "moonly",
 	"description": "",
 	"author": {
 		"name": "Andreas Ekström",
@@ -12,14 +12,17 @@
 	"scripts": {
 		"start": "npm run dev",
 		"build": "microbundle",
-		"dev": "microbundle watch"
+		"dev": "microbundle watch --external @preact/signals-core=signalsCore"
 	},
 	"exports": {
-		"default": "./dist/moon-ui.modern.js"
+		"default": "./dist/moonly.modern.js"
 	},
 	"types": "./dist/index.d.ts",
-	"module": "./dist/moon-ui.js",
+	"module": "./dist/moonly.js",
 	"devDependencies": {
 		"microbundle": "^0.15.1"
+	},
+	"dependencies": {
+		"@preact/signals-core": "^1.5.1"
 	}
 }

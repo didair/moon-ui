@@ -6,7 +6,7 @@
 		// "strict": true,
 		"noEmit": true,
 		"moduleResolution": "node",
-		"target": "ESNext",
+		"target": "es5",
 		"module": "esnext",
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,

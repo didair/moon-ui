@@ -1,23 +1,28 @@
-export interface ElementProps {
-	tag: 'div' | 'button' | 'a' | 'img' | 'span',
-	type: 'element' | 'text',
-	children?: any,
-	onMount?: Function,
-	class?: string | (() => Array<string> | string),
-	style?: string | CSSStyleDeclaration,
-	then?: Function,
-};
+import { ReadonlySignal, Signal } from "@preact/signals-core";
+import { isSignal } from "./signals";
 
 export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
+export type AllowedTagTypes = keyof HTMLElementTagNameMap;
+
+export interface ElementProps {
+	tag: AllowedTagTypes,
+	children?: any,
+	onMount?: Function,
+	class?: string | (() => Array<string> | string) | ReadonlySignal | Signal,
+	style?: string | CSSStyleDeclaration,
+	then?: Function,
+	value?: number | string | Signal | ReadonlySignal,
+	subscribe?: Function,
+	props?: Object,
+	id?: string | Signal | ReadonlySignal,
+};
 
 export const createElement = ({
 	tag = 'div',
-	type = 'element',
 	...rest
 }: ElementProps) => {
 	return {
 		tag,
-		type,
 		...rest
 	};
 };
@@ -43,6 +48,12 @@ export const applyElementStyles = (element: ElementProps, node: AllowedNodeTypes
 	}
 
 	if (element.class != null) {
+		if (isSignal(element.class)) {
+			(element.class as Signal).value.split(' ')
+			.filter((c) => c != '')
+			.forEach((className) => node.classList.add(className));
+		}
+
 		if (typeof element.class === 'function') {
 			let calculatedClassList = element.class();
 
@@ -67,6 +78,7 @@ export const applyElementStyles = (element: ElementProps, node: AllowedNodeTypes
 
 export const applyElementAttributes = (element: ElementProps, node: AllowedNodeTypes) => {
 	const safeProps = { ...element };
+	const safeEvents = ['onclick', 'onhover', 'onmousedown', 'onmouseup', 'onleave', 'onfocus'];
 
 	// Todo: Can we do this automatically instead? Maybe from reading the ElementProps int
 	delete safeProps.children;
@@ -74,9 +86,20 @@ export const applyElementAttributes = (element: ElementProps, node: AllowedNodeT
 	delete safeProps.onMount;
 	delete safeProps.style;
 	delete safeProps.tag;
-	delete safeProps.type;
+	delete safeProps.props;
 
 	Object.keys(safeProps).forEach((propKey) => {
-		node.setAttribute(propKey, safeProps[propKey]);
+		if (safeEvents.indexOf(propKey.toLowerCase()) > -1) {
+			// Bind event
+			node[propKey.toLowerCase()] = safeProps[propKey];
+		} else {
+			// Bind attr
+			if (isSignal(safeProps[propKey])) {
+				// Bind signal as attribute
+				node.setAttribute(propKey, (safeProps[propKey] as Signal).value);
+			} else {
+				node.setAttribute(propKey, safeProps[propKey]);
+			}
+		}
 	});
 };
