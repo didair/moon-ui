@@ -1,3 +1,5 @@
+import { ReadonlySignal, Signal } from "@preact/signals-core";
+import { isSignal } from "./signals";
 
 export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
 export type AllowedTagTypes = keyof HTMLElementTagNameMap;
@@ -6,11 +8,13 @@ export interface ElementProps {
 	tag: AllowedTagTypes,
 	children?: any,
 	onMount?: Function,
-	class?: string | (() => Array<string> | string),
+	class?: string | (() => Array<string> | string) | ReadonlySignal | Signal,
 	style?: string | CSSStyleDeclaration,
 	then?: Function,
-	value?: number | string,
+	value?: number | string | Signal | ReadonlySignal,
 	subscribe?: Function,
+	props?: Object,
+	id?: string | Signal | ReadonlySignal,
 };
 
 export const createElement = ({
@@ -44,6 +48,12 @@ export const applyElementStyles = (element: ElementProps, node: AllowedNodeTypes
 	}
 
 	if (element.class != null) {
+		if (isSignal(element.class)) {
+			(element.class as Signal).value.split(' ')
+			.filter((c) => c != '')
+			.forEach((className) => node.classList.add(className));
+		}
+
 		if (typeof element.class === 'function') {
 			let calculatedClassList = element.class();
 
@@ -76,12 +86,20 @@ export const applyElementAttributes = (element: ElementProps, node: AllowedNodeT
 	delete safeProps.onMount;
 	delete safeProps.style;
 	delete safeProps.tag;
+	delete safeProps.props;
 
 	Object.keys(safeProps).forEach((propKey) => {
 		if (safeEvents.indexOf(propKey.toLowerCase()) > -1) {
+			// Bind event
 			node[propKey.toLowerCase()] = safeProps[propKey];
 		} else {
-			node.setAttribute(propKey, safeProps[propKey]);
+			// Bind attr
+			if (isSignal(safeProps[propKey])) {
+				// Bind signal as attribute
+				node.setAttribute(propKey, (safeProps[propKey] as Signal).value);
+			} else {
+				node.setAttribute(propKey, safeProps[propKey]);
+			}
 		}
 	});
 };
