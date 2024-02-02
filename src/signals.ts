@@ -14,3 +14,18 @@ export const getSignalChildren = (children) => {
 
 	return [];
 };
+
+export const getSignalsInProps = (props: object) => {
+	let signals = [];
+	if (props == null || typeof props != 'object') {
+		return signals;
+	}
+
+	Object.keys(props).forEach((propKey) => {
+		if (isSignal(props[propKey])) {
+			signals.push(props[propKey]);
+		}
+	});
+
+	return signals;
+};
