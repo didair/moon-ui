@@ -6,17 +6,20 @@
 		"url": "https://github.com/didair"
 	},
 	"type": "module",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"private": false,
 	"source": "src/index.ts",
 	"scripts": {
 		"start": "npm run dev",
-		"build": "microbundle",
+		"build": "microbundle --external @preact/signals-core=signalsCore",
 		"dev": "microbundle watch --external @preact/signals-core=signalsCore"
 	},
 	"exports": {
 		"default": "./dist/moonly.modern.js"
 	},
+	"files": [
+		"dist"
+	],
 	"types": "./dist/index.d.ts",
 	"module": "./dist/moonly.js",
 	"devDependencies": {
