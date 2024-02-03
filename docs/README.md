@@ -80,6 +80,30 @@ const List = () => {
 };
 ```
 
+## Getting started
+
+First install from npm
+```
+npm i moonly
+```
+
+Then create your first app:
+```javascript
+import { Box, Text, render } from 'moonly';
+
+const app = [
+  Box({
+    class: 'flex items-center justify-center',
+    children: Text({
+      children: 'Hello World!',
+      class: 'text-2xl',
+    }),
+  })
+];
+
+render(app);
+```
+
 <p align="center">
 	<br /><br /><br />
 	<img src="https://github.com/didair/moonly/blob/main/docs/moonly_icon.png?raw=true" width="55" />
