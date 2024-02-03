@@ -31,7 +31,8 @@ const App = () => {
     children: [
       Text({
         class: "text-2xl block",
-        children: ["Button has been pressed ", counter, " times"],
+        children: ["Button has been pressed ", counter, " times"], // This works because the signal is
+        // passed down as a child directly. moonly subscribes to it and outputs the value.
       }),
 
       Box({
@@ -58,7 +59,8 @@ const List = () => {
           return list.value.map((item) => item + ", ");
         },
         props: {
-          list,
+          list, // moonly automatically subscribes to signals passed down in props. Children is
+          // re-rendered every time "list" changes
         },
       }),
 
