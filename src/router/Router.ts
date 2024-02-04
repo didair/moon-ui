@@ -1,4 +1,5 @@
 import { Signal, signal, computed } from "@preact/signals-core";
+import { ElementProps } from "../element";
 import { PageLayoutType, Page } from "./Page";
 import { render as renderElements } from "../render";
 
@@ -99,9 +100,7 @@ export class Router {
 			}
 
 			const layout = this._getPageLayoutInstance();
-			let elements = [];
-
-			console.log('got layout', layout);
+			let elements: ElementProps | Array<ElementProps> = [];
 
 			if (layout) {
 				elements = layout(page.render());
