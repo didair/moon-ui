@@ -10,15 +10,22 @@
 		"url": "https://github.com/didair"
 	},
 	"homepage": "https://github.com/didair/moonly",
+	"keywords": [
+		"javascript",
+		"typescript",
+		"moonly",
+		"user interface",
+		"UI"
+	],
 	"type": "module",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"private": false,
 	"source": "src/index.ts",
 	"scripts": {
 		"start": "npm run dev",
 		"build": "microbundle --external @preact/signals-core=signalsCore",
 		"dev": "microbundle watch --external @preact/signals-core=signalsCore",
-		"publish": "npm run build && npm publish"
+		"prepublish": "rm -rf dist/ && npm run build"
 	},
 	"exports": {
 		"default": "./dist/moonly.modern.js"
