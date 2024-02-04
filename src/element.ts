@@ -5,7 +5,6 @@ export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorEl
 export type AllowedTagTypes = keyof HTMLElementTagNameMap;
 
 export interface ElementProps {
-	tag: AllowedTagTypes,
 	children?: any,
 	onMount?: Function,
 	class?: string | (() => Array<string> | string) | ReadonlySignal | Signal,
@@ -17,10 +16,14 @@ export interface ElementProps {
 	id?: string | Signal | ReadonlySignal,
 };
 
+export interface CreateElementProps extends ElementProps {
+	tag: AllowedTagTypes,
+};
+
 export const createElement = ({
 	tag = 'div',
 	...rest
-}: ElementProps): ElementProps => {
+}: CreateElementProps): CreateElementProps => {
 	return {
 		tag,
 		...rest
