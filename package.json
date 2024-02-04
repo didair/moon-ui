@@ -1,12 +1,17 @@
 {
 	"name": "moonly",
-	"description": "",
+	"description": "Simple and fast javascript library",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:didair/moonly.git"
+	},
 	"author": {
 		"name": "Andreas Ekström",
 		"url": "https://github.com/didair"
 	},
+	"homepage": "https://github.com/didair/moonly",
 	"type": "module",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"private": false,
 	"source": "src/index.ts",
 	"scripts": {
