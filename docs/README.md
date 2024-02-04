@@ -31,7 +31,8 @@ const App = () => {
     children: [
       Text({
         class: "text-2xl block",
-        children: ["Button has been pressed ", counter, " times"],
+        children: ["Button has been pressed ", counter, " times"], // This works because the signal is
+        // passed down as a child directly. moonly subscribes to it and outputs the value.
       }),
 
       Box({
@@ -58,7 +59,8 @@ const List = () => {
           return list.value.map((item) => item + ", ");
         },
         props: {
-          list,
+          list, // moonly automatically subscribes to signals passed down in props. Children is
+          // re-rendered every time "list" changes
         },
       }),
 
@@ -76,6 +78,30 @@ const List = () => {
     ],
   });
 };
+```
+
+## Getting started
+
+First install from npm
+```
+npm i moonly
+```
+
+Then create your first app:
+```javascript
+import { Box, Text, render } from 'moonly';
+
+const app = [
+  Box({
+    class: 'flex items-center justify-center',
+    children: Text({
+      children: 'Hello World!',
+      class: 'text-2xl',
+    }),
+  })
+];
+
+render(app);
 ```
 
 <p align="center">

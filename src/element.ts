@@ -20,7 +20,7 @@ export interface ElementProps {
 export const createElement = ({
 	tag = 'div',
 	...rest
-}: ElementProps) => {
+}: ElementProps): ElementProps => {
 	return {
 		tag,
 		...rest

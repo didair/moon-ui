@@ -1,4 +1,5 @@
 import { createElement, ElementProps } from "../../element";
+import { attachAnchorEvents } from "../../router/LinkHelper";
 
 /**
  * Type: BASE
@@ -7,6 +8,7 @@ import { createElement, ElementProps } from "../../element";
 export const Link = (props: ElementProps) => {
 	return createElement({
 		tag: 'a',
+		...attachAnchorEvents(),
 		...props,
 	});
 };
