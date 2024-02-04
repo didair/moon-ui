@@ -1,5 +1,7 @@
 import { Router } from "./Router";
 
+const isExternalURL = (url) => new URL(url).origin !== location.origin;
+
 export const attachAnchorEvents = () => {
 	if ((window as any).routerContext == null) {
 		return {};
@@ -9,9 +11,11 @@ export const attachAnchorEvents = () => {
 
 	return {
 		onClick: (event: Event) => {
-			event.preventDefault();
 			const href = (event.target as HTMLAnchorElement).getAttribute('href');
-			router.navigate(href);
+			if (!isExternalURL(href)) {
+				event.preventDefault();
+				router.navigate(href);
+			}
 		}
 	};
 };
