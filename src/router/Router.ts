@@ -1,23 +1,25 @@
 import { Signal, signal, computed } from "@preact/signals-core";
-import { IPage, Page } from "./Page";
+import { PageLayoutType, Page } from "./Page";
 import { render as renderElements } from "../render";
 
 interface RouterProps {
-	pages: Array<IPage>;
+	pages: Array<any>; // Any for now due to TS2339 error
+	defaultLayout: PageLayoutType;
 };
 
 export class Router {
-	private _pages: Array<IPage>;
-	private _internalRoute: Signal;
+	private _pages: Array<Page>;
+	private _internalPage: Signal<Page>;
+	private _defaultLayout?: PageLayoutType;
 
 	constructor(props: RouterProps) {
 		if (props.pages == null || props.pages.length == 0) {
 			console.error('Pages is empty!');
 		}
 
-		this._internalRoute = new Signal(null);
-		this._pages = props.pages.map((pageInstance) => {
-			console.log('pageInstance', pageInstance);
+		this._internalPage = new Signal(null);
+		this._defaultLayout = props.defaultLayout;
+		this._pages = props.pages.map((pageInstance: typeof Page) => {
 			return new pageInstance();
 		});
 
@@ -46,23 +48,36 @@ export class Router {
 		this._loadRoute(path);
 	}
 
-	private _matchUrlToRoute(path: string) {
-		const matchedRoute = this._pages.find(route => {
+	private _matchUrlToPage(path: string) {
+		const matchedPage = this._pages.find(route => {
 			const routePathSplit = route.path.split('/');
 			const routePath = routePathSplit.length > 1 ? routePathSplit.slice(1) : '';
 			return routePath.toString() === path;
 		});
 
-		return matchedRoute;
+		return matchedPage;
 	}
 
 	private _loadRoute(path) {
-		const matchedRoute = this._matchUrlToRoute(path);
-		if (!matchedRoute) {
-			throw new Error('404: Route not found');
+		const matchedPage = this._matchUrlToPage(path);
+		if (!matchedPage) {
+			throw new Error('404: Page not found');
 		}
 
-		this._internalRoute.value = matchedRoute;
+		this._internalPage.value = matchedPage;
+	}
+
+	private _getPageLayoutInstance() {
+		const currentPage = this._internalPage.value;
+		if (currentPage.layout != null && typeof currentPage.layout === 'function') {
+			return currentPage.layout;
+		}
+
+		if (this._defaultLayout != null && typeof this._defaultLayout === 'function') {
+			return this._defaultLayout;
+		}
+
+		return false;
 	}
 
 	navigate(path: string) {
@@ -78,14 +93,29 @@ export class Router {
 	}
 
 	render(parent: HTMLElement = document.body) {
-		this._internalRoute.subscribe((page) => {
+		this._internalPage.subscribe((page) => {
 			if (page == null) {
 				return null;
 			}
 
+			const layout = this._getPageLayoutInstance();
+			let elements = [];
+
+			console.log('got layout', layout);
+
+			if (layout) {
+				elements = layout(page.render());
+			} else {
+				elements = page.render();
+			}
+
+			if (!Array.isArray(elements) && typeof elements === 'object') {
+				// Convert page elements to array if it returns object
+				elements = [elements];
+			}
+
 			parent.innerHTML = '';
-			renderElements(page.render(), parent);
+			renderElements(elements, parent);
 		});
 	}
-
 };
