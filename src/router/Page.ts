@@ -1,6 +1,6 @@
-import { ElementProps } from "../element";
+import { CreateElementProps } from "../element";
 
-export type PageLayoutType = (children: Array<ElementProps> | ElementProps) => Array<ElementProps> | ElementProps;
+export type PageLayoutType = (children: Array<CreateElementProps> | CreateElementProps) => Array<CreateElementProps> | CreateElementProps;
 
 export interface IPage {
 	path: string;

@@ -1,4 +1,4 @@
-import { Box } from "../base/Box";
+import { Text } from "../base/Text";
 import { createElement, ElementProps } from "../../element";
 import { signal } from "@preact/signals-core";
 
@@ -69,14 +69,13 @@ export const AnimatedText = ({
 	setTimeout(addCharacter, speed);
 
 	return createElement({
-		...props,
 		tag: 'span',
 		children: [
-			Box({
-				tag: 'span',
+			Text({
 				class: 'animated-text',
 				children: content,
 			})
 		],
+		...(props as any)
 	});
 };

@@ -79,7 +79,7 @@ export const applyElementStyles = (element: ElementProps, node: AllowedNodeTypes
 	}
 };
 
-export const applyElementAttributes = (element: ElementProps, node: AllowedNodeTypes) => {
+export const applyElementAttributes = (element: CreateElementProps, node: AllowedNodeTypes) => {
 	const safeProps = { ...element };
 	const safeEvents = ['onclick', 'onhover', 'onmousedown', 'onmouseup', 'onleave', 'onfocus'];
 

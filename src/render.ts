@@ -1,5 +1,5 @@
 import { Signal } from "@preact/signals-core";
-import { applyElementStyles, handleElementLifecycles, applyElementAttributes, ElementProps } from "./element";
+import { applyElementStyles, handleElementLifecycles, applyElementAttributes, CreateElementProps } from "./element";
 import { getSignalChildren, getSignalsInProps, isSignal } from "./signals";
 
 /**
@@ -7,7 +7,7 @@ import { getSignalChildren, getSignalsInProps, isSignal } from "./signals";
  * @param elementList List of elements
  * @param parent Where to render
  */
-export const render = (elementList: Array<ElementProps>, parent: HTMLElement = null) => {
+export const render = (elementList: Array<CreateElementProps>, parent: HTMLElement = null) => {
 	elementList.forEach(async (element) => {
 		if (element.then != null && typeof element.then === 'function') {
 			// Support for async components
@@ -40,7 +40,7 @@ export const render = (elementList: Array<ElementProps>, parent: HTMLElement = n
  * @param elementList List of elements
  * @returns Generated HTML (string)
  */
-export const prerender = (elementList: Array<ElementProps>) => {
+export const prerender = (elementList: Array<CreateElementProps>) => {
 	const node = document.createElement('body');
 
 	// elementList.forEach((element) =>
@@ -52,7 +52,7 @@ export const prerender = (elementList: Array<ElementProps>) => {
 	return node.outerHTML;
 };
 
-const renderElement = (element: ElementProps, parent = null) => {
+const renderElement = (element: CreateElementProps, parent = null) => {
 	const node = document.createElement(element.tag);
 
 	if (element.children != null) {
@@ -84,7 +84,7 @@ const renderElement = (element: ElementProps, parent = null) => {
 	document.body.appendChild(node);
 };
 
-const renderElementChildren = (element: ElementProps, node) => {
+const renderElementChildren = (element: CreateElementProps, node) => {
 	let children = element.children;
 	if (typeof element.children == 'function') {
 		children = element.children(element.props);
