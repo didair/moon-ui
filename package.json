@@ -25,7 +25,7 @@
 		"start": "npm run dev",
 		"build": "microbundle --external @preact/signals-core=signalsCore",
 		"dev": "microbundle watch --external @preact/signals-core=signalsCore",
-		"prepublish": "rm -rf dist/ && npm run build"
+		"prepublishOnly": "rm -rf dist/ && npm run build"
 	},
 	"exports": {
 		"default": "./dist/moonly.modern.js"
