@@ -18,9 +18,15 @@ export const render = (elementList: Array<CreateElementProps>, parent: HTMLEleme
 			return;
 		}
 
+		if (Array.isArray(element)) {
+			// If element returns array
+			element.forEach((e) => renderElement(e, parent));
+			return;
+		}
+
 		if (isSignal(element)) {
 			renderText(element.value + '', parent);
-			return true;
+			return;
 		}
 
 		if (typeof element === 'string') {
