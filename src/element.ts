@@ -1,6 +1,6 @@
 import { ReadonlySignal, Signal } from "@preact/signals-core";
 import { isSignal } from "./signals";
-import { GlobalEventKeys, bindNodeGlobalEvents } from "./events";
+import { AllowedEventKeys, bindNodeGlobalEvents, bindNodeLocalEvents } from "./events";
 
 export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
 export type AllowedTagTypes = keyof HTMLElementTagNameMap;
@@ -15,8 +15,11 @@ export interface ElementProps {
 	subscribe?: Function,
 	props?: Object,
 	id?: string | Signal | ReadonlySignal,
+	events?: {
+		[K in AllowedEventKeys]?: () => void;
+	},
 	globalEvents?: {
-		[K in GlobalEventKeys]?: () => void;
+		[K in AllowedEventKeys]?: () => void;
 	},
 };
 
@@ -90,6 +93,7 @@ export const applyElementAttributes = (element: CreateElementProps, node: Allowe
 	const safeEvents = ['onclick', 'onhover', 'onmousedown', 'onmouseup', 'onleave', 'onfocus'];
 
 	// Todo: Can we do this automatically instead? Maybe from reading the ElementProps int
+	delete safeProps.events;
 	delete safeProps.globalEvents;
 	delete safeProps.children;
 	delete safeProps.class;
@@ -101,6 +105,12 @@ export const applyElementAttributes = (element: CreateElementProps, node: Allowe
 	if (element.globalEvents != null) {
 		Object.keys(element.globalEvents).forEach((eventType: string) => {
 			bindNodeGlobalEvents(node, eventType, element.globalEvents[eventType]);
+		});
+	}
+
+	if (element.events != null) {
+		Object.keys(element.events).forEach((eventType: AllowedEventKeys) => {
+			bindNodeLocalEvents(node, eventType, element.events[eventType]);
 		});
 	}
 

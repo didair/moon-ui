@@ -6,7 +6,7 @@ const globalEvents = {
 	mousemove: [],
 };
 
-export type GlobalEventKeys = keyof typeof globalEvents;
+export type AllowedEventKeys = keyof typeof globalEvents;
 
 export const bindNodeGlobalEvents = (node: HTMLElement, event: string, callback: Function) => {
 	if (event.indexOf('scroll') > -1) {
@@ -30,6 +30,10 @@ export const bindNodeGlobalEvents = (node: HTMLElement, event: string, callback:
 	}
 
 	return false;
+};
+
+export const bindNodeLocalEvents = (node: HTMLElement, event: AllowedEventKeys, callback: Function) => {
+	node.addEventListener(event, (callback as any));
 };
 
 export const bindGlobalEvents = () => {
