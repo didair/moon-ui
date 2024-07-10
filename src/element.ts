@@ -1,12 +1,13 @@
 import { ReadonlySignal, Signal } from "@preact/signals-core";
 import { isSignal } from "./signals";
+import { GlobalEventKeys, bindNodeGlobalEvents } from "./events";
 
 export type AllowedNodeTypes = HTMLDivElement | HTMLButtonElement | HTMLAnchorElement | HTMLImageElement | HTMLSpanElement;
 export type AllowedTagTypes = keyof HTMLElementTagNameMap;
 
 export interface ElementProps {
 	children?: any,
-	onMount?: Function,
+	onMount?: (node: HTMLElement) => void,
 	class?: string | (() => Array<string> | string) | ReadonlySignal | Signal,
 	style?: string | CSSStyleDeclaration,
 	then?: Function,
@@ -14,6 +15,9 @@ export interface ElementProps {
 	subscribe?: Function,
 	props?: Object,
 	id?: string | Signal | ReadonlySignal,
+	globalEvents?: {
+		[K in GlobalEventKeys]?: () => void;
+	},
 };
 
 export interface CreateElementProps extends ElementProps {
@@ -30,9 +34,11 @@ export const createElement = ({
 	};
 };
 
-export const handleElementLifecycles = (element: ElementProps) => {
+export const handleElementLifecycles = (element: ElementProps, node: HTMLElement) => {
 	if (element.onMount != null && typeof element.onMount === 'function') {
-		element.onMount();
+		setTimeout(() => {
+			element.onMount(node);
+		});
 	}
 };
 
@@ -84,12 +90,19 @@ export const applyElementAttributes = (element: CreateElementProps, node: Allowe
 	const safeEvents = ['onclick', 'onhover', 'onmousedown', 'onmouseup', 'onleave', 'onfocus'];
 
 	// Todo: Can we do this automatically instead? Maybe from reading the ElementProps int
+	delete safeProps.globalEvents;
 	delete safeProps.children;
 	delete safeProps.class;
 	delete safeProps.onMount;
 	delete safeProps.style;
 	delete safeProps.tag;
 	delete safeProps.props;
+
+	if (element.globalEvents != null) {
+		Object.keys(element.globalEvents).forEach((eventType: string) => {
+			bindNodeGlobalEvents(node, eventType, element.globalEvents[eventType]);
+		});
+	}
 
 	Object.keys(safeProps).forEach((propKey) => {
 		if (safeEvents.indexOf(propKey.toLowerCase()) > -1) {

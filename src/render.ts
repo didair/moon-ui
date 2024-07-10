@@ -80,7 +80,7 @@ const renderElement = (element: CreateElementProps, parent = null) => {
 
 	applyElementAttributes(element, node);
 	applyElementStyles(element, node);
-	handleElementLifecycles(element);
+	handleElementLifecycles(element, node);
 
 	if (parent != null) {
 		parent.appendChild(node);
