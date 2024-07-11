@@ -4,6 +4,7 @@ const globalEvents = {
 	keydown: [],
 	click: [],
 	mousemove: [],
+	touchmove: [],
 };
 
 export type AllowedEventKeys = keyof typeof globalEvents;
@@ -26,6 +27,11 @@ export const bindNodeGlobalEvents = (node: HTMLElement, event: string, callback:
 
 	if (event.indexOf('mousemove') > -1) {
 		globalEvents.mousemove.push(callback);
+		return true;
+	}
+
+	if (event.indexOf('touchmove') > -1) {
+		globalEvents.touchmove.push(callback);
 		return true;
 	}
 
@@ -69,8 +75,17 @@ export const bindGlobalEvents = () => {
 		}
 	};
 
+	const onTouchMove = (event) => {
+		if (globalEvents.touchmove.length > 0) {
+			globalEvents.touchmove.forEach((callback) => {
+				callback(event);
+			});
+		}
+	};
+
 	window.addEventListener('scroll', onScroll);
 	document.addEventListener('mousemove', onMouseMove);
 	document.addEventListener('click', onClick);
 	document.addEventListener('keydown', onKeyDown);
+	document.addEventListener('touchmove', onTouchMove);
 };
